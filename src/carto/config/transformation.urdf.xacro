@@ -1,0 +1,70 @@
+
+
+<!--
+  Custom URDF for a single‑LiDAR backpack rig with accurate sensor offsets
+  Base → IMU:     x=0.01496 m, y=0.00001 m, z=0.270 m
+  Base → LiDAR:   x=0.06153 m, y=0.00040 m, z=1.65547 m
+  Base → Camera:  x=2.11000 m, y=0.00000 m, z=-1.00000 m
+-->
+<robot name="cartographer_backpack_3d">
+  <!-- ─────────── Materials (optional, for RViz) ─────────── -->
+  <material name="orange"> <color rgba="1 0.5 0.2 1"/> </material>
+  <material name="grey">   <color rgba="0.2 0.2 0.2 1"/> </material>
+  <material name="blue">   <color rgba="0.2 0.2 1 1"/> </material>
+
+  <!-- ─────────── Links ─────────── -->
+  <link name="base_link"/>
+
+  <link name="imu_link">
+    <visual>
+      <origin xyz="0 0 0"/>
+      <geometry> <box size="0.06 0.04 0.02"/> </geometry>
+      <material name="orange"/>
+    </visual>
+  </link>
+
+  <link name="velodyne">
+    <visual>
+      <origin xyz="0 0 0"/>
+      <geometry> <cylinder radius="0.05" length="0.07"/> </geometry>
+      <material name="grey"/>
+    </visual>
+  </link>
+
+  <link name="camera_link">
+    <visual>
+      <origin xyz="0 0 0"/>
+      <geometry> <box size="0.1 0.04 0.04"/> </geometry>
+      <material name="blue"/>
+    </visual>
+  </link>
+  
+  <link name="camera_color_optical_frame"/>
+
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child  link="camera_color_optical_frame"/>
+    <!-- Rotation to create an optical frame: +Z forward, +X right, +Y down -->
+    <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
+  </joint>
+
+
+  <!-- ─────────── Joints / Fixed transforms ─────────── -->
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="imu_link"/>
+    <origin xyz="0.01496 0.00001 0.270" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="velodyne"/>
+    <origin xyz="0.06153 0.00040 1.65547" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="camera_link"/>
+    <origin xyz="2.11000 0.0 0.00000" rpy="0 0 0"/>
+  </joint>
+</robot>
